@@ -1,8 +1,3 @@
-{
-  "name": "the-global-journal",
-  "version": "1.0.0",
-  "main": "api/index.js",
-  "dependencies": {
-    "@vercel/kv": "latest"
-  }
+"dependencies": {
+  "@vercel/kv": "latest"
 }
