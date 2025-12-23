@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Journal Admin</title>
+    <style>
+        body { font-family: sans-serif; padding: 50px; background: #222; color: white; }
+        .box { max-width: 400px; margin: auto; background: #333; padding: 20px; border-radius: 10px; }
+        input, textarea { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Post New Story</h2>
+        <form action="/api/publish" method="POST">
+            <input type="password" name="password" placeholder="Admin Password" required>
+            <input type="text" name="title" placeholder="News Headline" required>
+            <textarea name="content" placeholder="Article Details..." rows="5" required></textarea>
+            <button type="submit">Publish to World</button>
+        </form>
+    </div>
+</body>
+</html>

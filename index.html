@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Global Journal</title>
+    <style>
+        body { font-family: 'Georgia', serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .header { background: white; padding: 20px; text-align: center; border-bottom: 3px solid black; }
+        .article { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>THE GLOBAL JOURNAL</h1></div>
+    <div id="news-feed">
+        <p>Loading the latest stories...</p>
+    </div>
+
+    <script>
+        // This script fetches the news from your server
+        fetch('/api/get-news')
+            .then(res => res.json())
+            .then(data => {
+                const feed = document.getElementById('news-feed');
+                feed.innerHTML = data.map(post => `
+                    <div class="article">
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <small>${post.date}</small>
+                    </div>
+                `).join('');
+            });
+    </script>
+</body>
+</html>
