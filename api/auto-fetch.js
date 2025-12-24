@@ -4,9 +4,7 @@ export default async function handler(req, res) {
     const API_KEY = process.env.NEWS_API_KEY; 
 
     try {
-        // We use the 'everything' endpoint to search specifically for Rwanda
-        // 'q=Rwanda' targets the country
-        // 'language=en' ensures the news is in English
+        // We search for Rwanda news specifically
         const response = await fetch(`https://newsapi.org/v2/everything?q=Rwanda&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`);
         const data = await response.json();
 
@@ -15,18 +13,26 @@ export default async function handler(req, res) {
         }
 
         const automatedNews = data.articles.map(art => {
-            // Smart categorization based on keywords in the Rwandan news
+            // 1. Categorization Logic
             let category = "Other";
-            const text = (art.title + " " + art.description).toLowerCase();
+            const text = (art.title + " " + (art.description || "")).toLowerCase();
             
-            if (text.includes("visit rwanda") || text.includes("tourism") || text.includes("park") || text.includes("music")) category = "Entertainment";
-            else if (text.includes("kagame") || text.includes("government") || text.includes("rpf") || text.includes("parliament")) category = "Politics";
-            else if (text.includes("ferwafa") || text.includes("cycling") || text.includes("basketball") || text.includes("apr") || text.includes("rayons")) category = "Sports";
-            else if (text.includes("ict") || text.includes("kigali innovation") || text.includes("startup") || text.includes("bk")) category = "Tech";
+            if (text.includes("kagame") || text.includes("government") || text.includes("rpf") || text.includes("parliament") || text.includes("minister")) {
+                category = "Politics";
+            } else if (text.includes("ferwafa") || text.includes("cycling") || text.includes("basketball") || text.includes("apr") || text.includes("rayons") || text.includes("game")) {
+                category = "Sports";
+            } else if (text.includes("ict") || text.includes("kigali innovation") || text.includes("startup") || text.includes("ai") || text.includes("tech")) {
+                category = "Tech";
+            } else if (text.includes("visit rwanda") || text.includes("tourism") || text.includes("movie") || text.includes("music") || text.includes("art")) {
+                category = "Entertainment";
+            }
 
+            // 2. Return the data with the Image included
             return {
                 title: art.title,
-                content: art.description || "Read the full story on the original news site.",
+                content: art.description || "Click to read the full coverage on the source website.",
+                image: art.urlToImage || null, // This grabs the picture from the news source
+                url: art.url, // Link to the original article
                 category: category, 
                 date: new Date(art.publishedAt).toLocaleDateString('en-GB', {
                     day: 'numeric',
@@ -36,10 +42,10 @@ export default async function handler(req, res) {
             };
         });
 
-        // Save the fresh Rwandan news to your database
+        // 3. Save the new list to your Vercel KV database
         await kv.set('news_data', automatedNews);
         
-        res.status(200).send("Success: Rwandan News Updated!");
+        res.status(200).send("Success: Rwandan News with Images Updated!");
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
