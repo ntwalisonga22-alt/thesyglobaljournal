@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/auto-fetch",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
