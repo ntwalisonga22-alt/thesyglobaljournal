@@ -4,34 +4,25 @@ export default async function handler(req, res) {
     const API_KEY = process.env.NEWS_API_KEY;
 
     try {
-        const [enRes, frRes, rwRes] = await Promise.all([
-            fetch(`https://newsapi.org/v2/everything?q=Rwanda&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`),
-            fetch(`https://newsapi.org/v2/everything?q=Rwanda&language=fr&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`),
-            fetch(`https://newsapi.org/v2/everything?q=Rwanda+OR+Kigali+OR+Amakuru&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`)
-        ]);
+        // Single focused search for Rwanda
+        const response = await fetch(`https://newsapi.org/v2/everything?q=Rwanda&sortBy=publishedAt&pageSize=30&apiKey=${API_KEY}`);
+        const data = await response.json();
 
-        const enData = await enRes.json();
-        const frData = await frRes.json();
-        const rwData = await rwRes.json();
+        const cleanArticles = (data.articles || [])
+            .filter(art => art.title && art.urlToImage)
+            .slice(0, 20)
+            .map(art => ({
+                title: art.title,
+                description: art.description || (art.content ? art.content.split('[+')[0] : "Official news coverage from Rwanda."),
+                urlToImage: art.urlToImage,
+                publishedAt: art.publishedAt,
+                url: art.url
+            }));
 
-        const cleanArticles = (articles) => {
-            return (articles || [])
-                .filter(art => art.title && art.urlToImage)
-                .slice(0, 15)
-                .map(art => ({
-                    title: art.title,
-                    description: art.description || (art.content ? art.content.split('[+')[0] : "Click to read the full story on the official portal."),
-                    urlToImage: art.urlToImage,
-                    publishedAt: art.publishedAt,
-                    url: art.url
-                }));
-        };
+        // Save to the single main news key
+        await kv.set('news_data', cleanArticles);
 
-        await kv.set('news_en', cleanArticles(enData.articles));
-        await kv.set('news_fr', cleanArticles(frData.articles));
-        await kv.set('news_rw', cleanArticles(rwData.articles));
-
-        res.status(200).json({ message: "Multi-language database successfully updated!" });
+        res.status(200).json({ message: "Robot successfully updated the news feed!" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
