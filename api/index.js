@@ -7,20 +7,18 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { password, title, content, image, category } = req.body;
+        const { password, title, content, image } = req.body;
         if (password !== '1234') return res.status(401).send("Unauthorized");
 
-        let currentNews = await kv.get('news_data') || [];
-        const manualPost = {
+        let current = await kv.get('news_data') || [];
+        const manual = {
             title,
             description: content,
-            urlToImage: image || null,
-            publishedAt: new Date().toISOString(),
-            category: category || "Admin"
+            image: image || null,
+            date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
         };
-
-        currentNews.unshift(manualPost);
-        await kv.set('news_data', currentNews.slice(0, 30));
-        return res.status(200).send("Published successfully!");
+        current.unshift(manual);
+        await kv.set('news_data', current.slice(0, 20));
+        return res.status(200).send("Journal Published!");
     }
 }
