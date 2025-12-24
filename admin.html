@@ -1,23 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Journal Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Publish News</title>
     <style>
-        body { font-family: sans-serif; padding: 50px; background: #222; color: white; }
-        .box { max-width: 400px; margin: auto; background: #333; padding: 20px; border-radius: 10px; }
-        input, textarea { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+        body { font-family: Arial, sans-serif; padding: 40px; background-color: #f4f4f4; text-align: center; }
+        .admin-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; width: 100%; max-width: 500px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #333; color: white; padding: 15px; border: none; width: 100%; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #555; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>Post New Story</h2>
-        <form action="/api/publish" method="POST">
+
+    <div class="admin-box">
+        <h2>Publish New Article</h2>
+        <form action="/api" method="POST">
             <input type="password" name="password" placeholder="Admin Password" required>
             <input type="text" name="title" placeholder="News Headline" required>
-            <textarea name="content" placeholder="Article Details..." rows="5" required></textarea>
-            <button type="submit">Publish to World</button>
+            <textarea name="content" rows="5" placeholder="Write the story here..." required></textarea>
+            <input type="text" name="video" placeholder="YouTube Link (Optional)">
+            
+            <label style="display:block; text-align:left; font-size: 0.9rem; color: #666;">Choose Category:</label>
+            <select name="category" required>
+                <option value="Politics">Politics</option>
+                <option value="Sports">Sports</option>
+                <option value="Tech">Tech</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+            </select>
+            
+            <button type="submit">Publish to Website</button>
         </form>
     </div>
+
 </body>
 </html>
