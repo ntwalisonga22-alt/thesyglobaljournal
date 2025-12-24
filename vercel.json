@@ -1,10 +1,4 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "crons": [
-    {
-      "path": "/api/auto-fetch",
-      "schedule": "0 8 * * *"
-    }
-  ]
+  "cleanUrls": true
 }
