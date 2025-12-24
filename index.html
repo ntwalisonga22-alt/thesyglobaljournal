@@ -4,68 +4,73 @@
     <meta charset="UTF-8">
     <title>The Global Journal</title>
     <style>
-        body { font-family: "Georgia", serif; background-color: #f4f1ea; padding: 20px; color: #1a1a1a; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border: 1px solid #ccc; }
+        body { font-family: "Georgia", serif; background-color: #f0f0f0; padding: 20px; color: #000; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border: 2px solid #000; }
         
-        h1 { font-size: 4rem; text-align: center; border-bottom: 5px double #000; padding-bottom: 10px; margin-bottom: 40px; text-transform: uppercase; }
+        /* Bold Black Title */
+        h1 { 
+            font-size: 5rem; 
+            text-align: center; 
+            color: #000; 
+            border-bottom: 8px solid #000; 
+            margin-bottom: 10px; 
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+        .date-line { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 30px; font-weight: bold; text-transform: uppercase; }
 
-        /* Section Headings (e.g., POLITICS, SPORTS) */
-        .section-header { 
-            background: #000; color: #fff; padding: 8px 20px; 
-            margin-top: 50px; text-transform: uppercase; 
-            letter-spacing: 3px; font-weight: bold; font-size: 1.2rem;
+        .section-header { background: #000; color: #fff; padding: 10px 20px; margin-top: 40px; text-transform: uppercase; font-weight: bold; }
+
+        /* Article Layout with Images */
+        .article { display: flex; flex-direction: column; border-bottom: 1px solid #ddd; padding: 25px 0; gap: 20px; }
+        @media (min-width: 600px) {
+            .article { flex-direction: row; align-items: flex-start; }
         }
 
-        .article { border-bottom: 1px solid #eee; padding: 20px 0; }
-        .article:last-child { border-bottom: none; }
-        .article h2 { margin-top: 0; font-size: 1.8rem; line-height: 1.2; }
-        .article p { color: #444; font-size: 1.1rem; }
+        .article-img { width: 100%; max-width: 300px; height: 200px; object-fit: cover; border: 1px solid #000; }
+        .article-content { flex: 1; }
+        .article-content h2 { margin: 0 0 10px 0; font-size: 1.8rem; line-height: 1.1; color: #000; }
+        .article-content p { color: #333; font-size: 1.05rem; }
         
-        footer { text-align: center; padding: 50px; border-top: 2px solid #000; margin-top: 60px; font-size: 0.8rem; color: #666; }
+        footer { text-align: center; padding: 50px; border-top: 4px solid #000; margin-top: 50px; background: #fff; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>The Global Journal</h1>
+        <div class="date-line">Wednesday, December 24, 2025 | Rwanda Edition</div>
         
-        <div id="main-content">
-            <p style="text-align:center;">Organizing today's news...</p>
-        </div>
+        <div id="main-content">Loading the latest imagery...</div>
 
         <footer>
             <p>&copy; 2025 The Global Journal. All rights reserved.</p>
-            <p>Made by <a href="https://instagram.com/sawungayvan" style="color:#234; font-weight:bold;">@S.Yvan's IG Account</a></p>
+            <p>Made by <a href="https://instagram.com/sawungayvan" style="color:#000; font-weight:bold;">@Songa Yvan</a></p>
         </footer>
     </div>
 
     <script>
-        // These are the groups we want to show
         const sections = ["Politics", "Sports", "Tech", "Entertainment", "Other"];
-
         fetch('/api')
             .then(res => res.json())
             .then(data => {
                 const main = document.getElementById('main-content');
-                main.innerHTML = ""; // Clear the loading message
-
+                main.innerHTML = "";
                 sections.forEach(secName => {
-                    // 1. Filter articles that belong to this section
                     const group = data.filter(item => item.category === secName);
-                    
-                    // 2. Only create the section if it has articles
                     if (group.length > 0) {
                         const secWrap = document.createElement('div');
-                        secWrap.innerHTML = `
-                            <div class="section-header">${secName}</div>
-                            ${group.map(art => `
+                        secWrap.innerHTML = `<div class="section-header">${secName}</div>` + 
+                            group.map(art => `
                                 <div class="article">
-                                    <h2>${art.title}</h2>
-                                    <p>${art.content}</p>
-                                    <small>${art.date}</small>
+                                    ${art.image ? `<img src="${art.image}" class="article-img" alt="news">` : ''}
+                                    <div class="article-content">
+                                        <h2>${art.title}</h2>
+                                        <p>${art.content}</p>
+                                        <small>${art.date}</small>
+                                    </div>
                                 </div>
-                            `).join('')}
-                        `;
+                            `).join('');
                         main.appendChild(secWrap);
                     }
                 });
