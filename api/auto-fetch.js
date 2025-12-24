@@ -4,33 +4,43 @@ export default async function handler(req, res) {
     const API_KEY = process.env.NEWS_API_KEY; 
 
     try {
-        // Fetching 20 articles to ensure we have enough for different categories
-        const response = await fetch(`https://newsapi.org/v2/top-headlines?language=en&pageSize=20&apiKey=${API_KEY}`);
+        // We use the 'everything' endpoint to search specifically for Rwanda
+        // 'q=Rwanda' targets the country
+        // 'language=en' ensures the news is in English
+        const response = await fetch(`https://newsapi.org/v2/everything?q=Rwanda&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`);
         const data = await response.json();
 
-        if (data.status !== "ok") throw new Error("NewsAPI Error");
+        if (data.status !== "ok") {
+            return res.status(500).json({ error: "NewsAPI Error: " + data.message });
+        }
 
         const automatedNews = data.articles.map(art => {
-            // Simple logic to "guess" the category based on keywords
+            // Smart categorization based on keywords in the Rwandan news
             let category = "Other";
             const text = (art.title + " " + art.description).toLowerCase();
             
-            if (text.includes("election") || text.includes("government") || text.includes("biden") || text.includes("trump")) category = "Politics";
-            else if (text.includes("game") || text.includes("nba") || text.includes("football") || text.includes("score")) category = "Sports";
-            else if (text.includes("tech") || text.includes("apple") || text.includes("ai") || text.includes("google")) category = "Tech";
-            else if (text.includes("movie") || text.includes("music") || text.includes("star") || text.includes("show")) category = "Entertainment";
+            if (text.includes("visit rwanda") || text.includes("tourism") || text.includes("park") || text.includes("music")) category = "Entertainment";
+            else if (text.includes("kagame") || text.includes("government") || text.includes("rpf") || text.includes("parliament")) category = "Politics";
+            else if (text.includes("ferwafa") || text.includes("cycling") || text.includes("basketball") || text.includes("apr") || text.includes("rayons")) category = "Sports";
+            else if (text.includes("ict") || text.includes("kigali innovation") || text.includes("startup") || text.includes("bk")) category = "Tech";
 
             return {
                 title: art.title,
-                content: art.description || "View full story on source site.",
+                content: art.description || "Read the full story on the original news site.",
                 category: category, 
-                date: new Date().toLocaleDateString()
+                date: new Date(art.publishedAt).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                })
             };
         });
 
+        // Save the fresh Rwandan news to your database
         await kv.set('news_data', automatedNews);
-        res.status(200).send("Success: Organized News Updated!");
+        
+        res.status(200).send("Success: Rwandan News Updated!");
     } catch (error) {
-        res.status(500).send("Error: " + error.message);
+        res.status(500).json({ error: error.message });
     }
 }
