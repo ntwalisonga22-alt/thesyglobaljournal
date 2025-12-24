@@ -18,7 +18,7 @@ export default async function handler(req, res) {
             }));
 
         await kv.set('news_data', cleanData);
-        res.status(200).send("Robot Synced Successfully!");
+        res.status(200).send("Database Synced");
     } catch (error) {
         res.status(500).send(error.message);
     }
