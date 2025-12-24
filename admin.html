@@ -4,52 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | SY News</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background-color: #f0f0f0; color: #333; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f0f0; padding: 20px; color: #333; }
         .admin-container { max-width: 600px; margin: 0 auto; }
         
-        /* Auto-Pilot Section */
+        /* Dashboard Header */
+        h1 { text-align: center; text-transform: uppercase; letter-spacing: 2px; color: #000; }
+
+        /* Auto-Robot Section */
         .robot-box { 
             background: #000; color: white; padding: 30px; 
             border-radius: 12px; margin-bottom: 30px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .robot-btn { 
             background: #27ae60; color: white; border: none; padding: 15px 25px; 
-            font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 1.1rem;
-            transition: 0.3s;
+            font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 1rem;
+            width: 100%; transition: 0.3s;
         }
-        .robot-btn:hover { background: #2ecc71; transform: scale(1.05); }
+        .robot-btn:hover { background: #2ecc71; }
 
         /* Manual Form Section */
-        .admin-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        .publish-btn { background-color: #000; color: white; padding: 15px; border: none; width: 100%; border-radius: 6px; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
+        .admin-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.2rem; }
+        
+        input, textarea, select { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            border: 1px solid #ddd; border-radius: 6px; 
+            box-sizing: border-box; font-size: 1rem; 
+        }
+        
+        .publish-btn { 
+            background-color: #000; color: white; padding: 15px; 
+            border: none; width: 100%; border-radius: 6px; 
+            cursor: pointer; font-size: 1rem; font-weight: bold; 
+        }
         .publish-btn:hover { background-color: #333; }
         
-        #status { margin-top: 15px; font-weight: bold; font-family: monospace; }
+        #status { margin-top: 15px; font-weight: bold; font-family: monospace; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="admin-container">
+        <h1>SY NEWS ADMIN</h1>
+
         <div class="robot-box">
-            <h2>Auto-Pilot Control</h2>
-            <p>Click below to tell the robot to fetch the latest Rwandan news immediately.</p>
-            <button class="robot-btn" onclick="triggerRobot()">ACTIVATE NEWS ROBOT</button>
+            <h2>Auto-Pilot</h2>
+            <p>Fetch the latest Rwandan news headlines automatically.</p>
+            <button class="robot-btn" onclick="triggerRobot()">REFRESH SYSTEM NEWS</button>
             <div id="status"></div>
         </div>
 
         <div class="admin-box">
-            <h2>Write a Manual Story</h2>
+            <h2>Manual Entry</h2>
             <form action="/api" method="POST">
                 <input type="password" name="password" placeholder="Admin Password" required>
                 <input type="text" name="title" placeholder="News Headline" required>
-                <textarea name="content" rows="5" placeholder="Write your story here..." required></textarea>
-                <input type="text" name="image" placeholder="Image URL (Paste a link to a photo)">
+                <textarea name="content" rows="4" placeholder="Story content..." required></textarea>
+                <input type="text" name="image" placeholder="Image URL (Link to a photo)">
                 
-                <label style="display:block; text-align:left; font-size: 0.9rem; color: #666; margin-top:10px;">Choose Category:</label>
                 <select name="category" required>
                     <option value="Politics">Politics</option>
                     <option value="Sports">Sports</option>
@@ -58,7 +75,7 @@
                     <option value="Other">Other</option>
                 </select>
                 
-                <button type="submit" class="publish-btn">Publish to Website</button>
+                <button type="submit" class="publish-btn">PUBLISH STORY</button>
             </form>
         </div>
     </div>
@@ -67,14 +84,13 @@
         async function triggerRobot() {
             const status = document.getElementById('status');
             status.style.color = "#2ecc71";
-            status.innerText = "Robot is waking up...";
+            status.innerText = "Robot connecting...";
             try {
-                // This pings the auto-fetch script we made earlier
                 const res = await fetch('/api/auto-fetch');
                 if (res.ok) {
-                    status.innerText = "✅ SUCCESS: Rwanda news updated!";
+                    status.innerText = "✅ REFRESH SUCCESSFUL";
                 } else {
-                    status.innerText = "❌ ERROR: Check Vercel Logs.";
+                    status.innerText = "❌ ERROR: Connection Failed";
                 }
             } catch (err) {
                 status.innerText = "❌ FAILED: " + err.message;
