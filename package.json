@@ -1,3 +1,5 @@
-"dependencies": {
-  "@vercel/kv": "latest"
+{
+  "dependencies": {
+    "@vercel/kv": "latest"
+  }
 }
