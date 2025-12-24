@@ -11,14 +11,13 @@ export default async function handler(req, res) {
         if (password !== '1234') return res.status(401).send("Unauthorized");
 
         let current = await kv.get('news_data') || [];
-        const manual = {
-            title,
-            description: content,
+        current.unshift({
+            title, 
+            description: content, 
             image: image || null,
             date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-        };
-        current.unshift(manual);
+        });
         await kv.set('news_data', current.slice(0, 20));
-        return res.status(200).send("Journal Published!");
+        return res.status(200).send("Published");
     }
 }
