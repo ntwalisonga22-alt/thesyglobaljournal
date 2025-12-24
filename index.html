@@ -4,22 +4,22 @@
     <title>The Global Journal</title>
     <style>
         body { body {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    font-family: 'Helvetica', sans-serif;
+    background-color: #f4f1ea; /* "Old paper" color */
+    background-image: radial-gradient(#d1ccc0 1px, transparent 1px);
+    background-size: 20px 20px; /* Subtle paper texture */
+    font-family: 'Georgia', serif;
+    color: #333;
     margin: 0;
     padding: 20px;
 }
-/* This makes your articles stand out on the dark background */
-.article {
-    background: #252525;
-    border: 1px solid #333;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-} }
         .header { background: white; padding: 20px; text-align: center; border-bottom: 3px solid black; }
-        .article { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .article { .article {
+    background: rgba(255, 255, 255, 0.8); /* See-through white */
+    backdrop-filter: blur(10px); /* Blurs the background behind the news */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+} }
     </style>
 </head>
 <body>
@@ -46,3 +46,4 @@
 </body>
 
 </html>
+
