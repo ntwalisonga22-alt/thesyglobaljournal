@@ -1,0 +1,10 @@
+name: Hourly News Update
+on:
+  schedule:
+    - cron: '0 * * * *' # This means "Every Hour"
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping News Robot
+        run: curl https://your-site-name.vercel.app/api/fetch-news
