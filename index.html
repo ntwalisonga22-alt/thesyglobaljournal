@@ -4,63 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SY News | Rwanda</title>
-    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         body { font-family: "Georgia", serif; background: #fff; margin: 0; padding: 20px; color: #000; }
-        .container { max-width: 1100px; margin: 0 auto; border: 1px solid #000; padding: 40px; box-shadow: 15px 15px 0px #000; }
+        .container { max-width: 1000px; margin: 0 auto; border: 1px solid #000; padding: 40px; }
         
-        h1.logo { font-size: 5.5rem; text-align: center; text-transform: uppercase; margin: 0; font-weight: 900; letter-spacing: -3px; }
-        .sub-header { text-align: center; font-weight: bold; border-top: 5px solid #000; border-bottom: 2px solid #000; padding: 12px 0; margin: 20px 0 40px 0; text-transform: uppercase; letter-spacing: 2px; }
+        h1.logo { font-size: 5rem; text-align: center; text-transform: uppercase; margin: 0; font-weight: 900; }
+        .header-line { text-align: center; font-weight: bold; border-top: 4px solid #000; border-bottom: 2px solid #000; padding: 10px 0; margin: 20px 0 40px 0; }
 
-        .article { display: flex; gap: 40px; padding: 40px 0; border-bottom: 1px solid #000; align-items: flex-start; }
-        @media (max-width: 850px) { .article { flex-direction: column; } }
+        .article { display: flex; gap: 30px; padding: 30px 0; border-bottom: 1px solid #eee; align-items: flex-start; }
+        @media (max-width: 768px) { .article { flex-direction: column; } }
 
-        .article img { width: 100%; max-width: 480px; height: 300px; object-fit: cover; border: 1px solid #000; filter: grayscale(10%); }
+        .article img { width: 100%; max-width: 400px; height: 250px; object-fit: cover; border: 1px solid #000; }
         .article-content { flex: 1; }
         
-        .article-content h2 { margin: 0 0 15px 0; font-size: 2.4rem; line-height: 1.1; font-weight: 900; color: #000; }
-        .article-content p { font-size: 1.3rem; color: #222; line-height: 1.6; margin-bottom: 20px; }
-        .article-date { font-size: 0.95rem; font-weight: bold; color: #444; text-transform: uppercase; }
+        .article-content h2 { margin: 0 0 10px 0; font-size: 2rem; line-height: 1.1; font-weight: 900; }
+        .article-content p { font-size: 1.2rem; color: #333; line-height: 1.5; }
+        .article-date { font-size: 0.9rem; font-weight: bold; color: #666; margin-top: 10px; }
 
-        footer { margin-top: 60px; text-align: center; border-top: 1px solid #000; padding-top: 30px; font-weight: bold; }
-        footer a { color: #000; text-decoration: underline; }
+        footer { margin-top: 50px; text-align: center; border-top: 1px solid #000; padding-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="logo">SY NEWS</h1>
-        <div class="sub-header">RWANDA EDITION | <span id="live-date"></span></div>
-        <div id="news-feed">Refreshing the headlines...</div>
+        <div class="header-line">RWANDA EDITION | <span id="current-date"></span></div>
+        <div id="news-feed">Loading journal...</div>
         <footer>
-            <p>© 2025 SY NEWS | DESIGNED BY <a href="https://instagram.com/sawungayvan">@SONGA YVAN</a></p>
+            <p>© 2025 SY NEWS | BY <a href="https://instagram.com/songa_yvan" style="color:#000;">@SONGA YVAN</a></p>
         </footer>
     </div>
 
     <script>
-        document.getElementById('live-date').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
-        async function fetchNews() {
+        async function load() {
             const feed = document.getElementById('news-feed');
             try {
                 const res = await fetch('/api');
-                const articles = await res.json();
-                
-                // Matches the data names saved by the robot (image, description, date)
-                feed.innerHTML = articles.map(art => `
+                const data = await res.json();
+                feed.innerHTML = data.map(art => `
                     <div class="article">
-                        ${art.image ? `<img src="${art.image}" alt="news" onerror="this.style.display='none'">` : ''}
+                        ${art.image ? `<img src="${art.image}">` : ''}
                         <div class="article-content">
                             <h2>${art.title}</h2>
                             <p>${art.description}</p>
-                            <div class="article-date">Published: ${art.date}</div>
+                            <div class="article-date">${art.date}</div>
                         </div>
                     </div>
                 `).join('');
-            } catch (err) {
-                feed.innerHTML = "<h2 style='text-align:center'>Connecting to News Servers...</h2>";
+            } catch (e) {
+                feed.innerHTML = "<h2>Failed to load news.</h2>";
             }
         }
-        fetchNews();
+        load();
     </script>
 </body>
 </html>
