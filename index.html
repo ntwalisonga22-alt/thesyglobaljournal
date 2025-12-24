@@ -5,113 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Global Journal</title>
     <style>
-        body {
-            font-family: "Georgia", serif;
-            line-height: 1.6;
-            background-color: #f9f9f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
+        body { font-family: "Georgia", serif; line-height: 1.6; background-color: #f9f9f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 3.5rem; text-align: center; border-bottom: 4px double #333; padding-bottom: 10px; text-transform: uppercase; }
+        
+        /* Category Section Styling */
+        .category-section { margin-top: 40px; }
+        .category-title { 
+            background: #333; color: white; padding: 10px 20px; 
+            text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem; 
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 3.5rem;
-            text-align: center;
-            border-bottom: 4px double #333;
-            padding-bottom: 10px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .article {
-            background: white;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid #ddd;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
-        }
-        .article h2 {
-            margin-top: 0;
-            font-size: 1.8rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        footer {
-            text-align: center;
-            padding: 40px;
-            margin-top: 50px;
-            border-top: 1px solid #333;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        footer a {
-            color: #333;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        #news-feed iframe {
-            width: 100%;
-            height: 400px;
-            border: none;
-            margin-top: 15px;
-        }
+        .article { background: white; padding: 20px; margin: 15px 0; border: 1px solid #ddd; }
+        .article h2 { margin-top: 0; color: #111; border-bottom: 1px solid #eee; }
+        
+        footer { text-align: center; padding: 40px; border-top: 1px solid #333; margin-top: 50px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>The Global Journal</h1>
         
-        <div id="news-feed">Loading the latest news...</div>
-
-        <div style="margin-top: 50px;">
-            <h3>Reader Discussions</h3>
-            <script src="https://giscus.app/client.js"
-                data-repo="[YOUR_USERNAME]/[YOUR_REPO_NAME]"
-                data-repo-id="[YOUR_REPO_ID]"
-                data-category="Announcements"
-                data-category-id="[YOUR_CATEGORY_ID]"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="light"
-                data-lang="en"
-                crossorigin="anonymous"
-                async>
-            </script>
+        <div id="news-sections">
+            <p style="text-align:center;">Loading today's edition...</p>
         </div>
 
         <footer>
             <p>&copy; 2025 The Global Journal. All rights reserved.</p>
-            <p>Made by <a href="https://instagram.com/sawungayvan" target="_blank">@SONGA Yvan IG</a></p>
+            <p>Made by <a href="https://instagram.com/sawungayvan">@S.Yvan's Instagram account</a></p>
         </footer>
     </div>
 
     <script>
+        const categories = ["Politics", "Sports", "Tech", "Entertainment", "Other"];
+
         fetch('/api')
             .then(res => res.json())
             .then(data => {
-                const feed = document.getElementById('news-feed');
-                if (data.length === 0) {
-                    feed.innerHTML = "<p>No news stories found.</p>";
-                    return;
-                }
-                feed.innerHTML = data.map(post => `
-                    <div class="article">
-                        <h2>${post.title}</h2>
-                        <p>${post.content}</p>
-                        ${post.video && post.video !== 'none' ? `<iframe src="${post.video.replace('watch?v=', 'embed/')}"></iframe>` : ''}
-                        <br><small>${post.date}</small>
-                    </div>
-                `).join('');
-            })
-            .catch(err => {
-                document.getElementById('news-feed').innerHTML = "Error loading news.";
+                const container = document.getElementById('news-sections');
+                container.innerHTML = ""; // Clear loading text
+
+                categories.forEach(cat => {
+                    // Filter news for this specific category
+                    const filteredNews = data.filter(post => post.category === cat);
+                    
+                    if (filteredNews.length > 0) {
+                        const section = document.createElement('div');
+                        section.className = 'category-section';
+                        section.innerHTML = `
+                            <div class="category-title">${cat}</div>
+                            ${filteredNews.map(post => `
+                                <div class="article">
+                                    <h2>${post.title}</h2>
+                                    <p>${post.content}</p>
+                                    ${post.video && post.video !== 'none' ? `<iframe width="100%" height="315" src="${post.video.replace('watch?v=', 'embed/')}" frameborder="0"></iframe>` : ''}
+                                    <br><small>${post.date}</small>
+                                </div>
+                            `).join('')}
+                        `;
+                        container.appendChild(section);
+                    }
+                });
             });
     </script>
 </body>
