@@ -3,71 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SY News | Rwanda</title>
+    <title>SY News | Rwanda Edition</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        body { font-family: "Georgia", serif; background: #f0f0f0; margin: 0; padding: 20px; color: #000; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border: 2px solid #000; box-shadow: 12px 12px 0px #000; }
+        body { font-family: "Georgia", serif; background: #fff; margin: 0; padding: 20px; color: #000; }
+        .container { max-width: 1100px; margin: 0 auto; border: 1px solid #000; padding: 40px; }
         
-        h1 { font-size: 5rem; text-align: center; text-transform: uppercase; margin: 0; border-bottom: 10px solid #000; font-weight: 900; line-height: 0.8; padding-bottom: 10px; }
-        .date-line { text-align: center; font-weight: bold; padding: 10px 0; border-bottom: 2px solid #000; margin-bottom: 30px; text-transform: uppercase; }
+        h1.logo { font-size: 5.5rem; text-align: center; text-transform: uppercase; margin: 0; font-weight: 900; letter-spacing: -2px; }
+        .sub-header { text-align: center; font-weight: bold; border-top: 4px solid #000; border-bottom: 2px solid #000; padding: 10px 0; margin: 20px 0 40px 0; text-transform: uppercase; letter-spacing: 1px; }
 
-        .article { padding: 30px 0; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; gap: 25px; }
-        @media (min-width: 750px) { .article { flex-direction: row; align-items: flex-start; } }
+        .article { display: flex; gap: 30px; padding: 30px 0; border-bottom: 1px solid #ddd; align-items: flex-start; }
+        @media (max-width: 768px) { .article { flex-direction: column; } }
+
+        .article img { width: 100%; max-width: 450px; height: 280px; object-fit: cover; border: 1px solid #000; }
+        .article-content { flex: 1; }
         
-        .article img { width: 100%; max-width: 350px; height: 230px; object-fit: cover; border: 2px solid #000; }
-        .article-info { flex: 1; }
-        
-        .category-tag { background: #000; color: #fff; padding: 4px 10px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; display: inline-block; margin-bottom: 10px; }
-        
-        .article-info h2 { margin: 0 0 12px 0; font-size: 2.2rem; line-height: 1.1; font-weight: 900; color: #000; }
-        .article-info p { font-size: 1.2rem; color: #222; line-height: 1.6; margin-bottom: 15px; }
-        
-        .meta-data { font-size: 0.9rem; font-weight: bold; color: #555; text-transform: uppercase; }
-        
-        footer { margin-top: 50px; text-align: center; border-top: 5px solid #000; padding-top: 25px; font-weight: 900; font-size: 1.1rem; }
+        .article-content h2 { margin: 0 0 15px 0; font-size: 2.2rem; line-height: 1.1; font-weight: 900; color: #000; }
+        .article-content p { font-size: 1.25rem; color: #333; line-height: 1.5; margin-bottom: 15px; }
+        .article-date { font-size: 0.9rem; font-weight: bold; color: #666; }
+
+        footer { margin-top: 60px; text-align: center; border-top: 1px solid #000; padding-top: 30px; font-size: 1rem; }
+        footer a { color: #000; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>SY NEWS</h1>
-        <div class="date-line">Kigali, Rwanda | <span id="current-date"></span></div>
+        <h1 class="logo">SY NEWS</h1>
+        <div class="sub-header">
+            <span id="display-date"></span> | RWANDA EDITION
+        </div>
         
-        <div id="feed">Loading your headlines...</div>
+        <div id="news-feed">Loading the latest journals...</div>
 
         <footer>
-            <p>© 2025 SY NEWS | ALL RIGHTS RESERVED</p>
-            <p>MADE BY <a href="https://instagram.com/sawungayvan" style="color:#000; text-decoration: underline;">@SONGA YVAN</a></p>
+            <p>© 2025 SY News. All rights reserved.</p>
+            <p>Made by <a href="https://instagram.com/sawungayvan">@Songa Yvan</a></p>
         </footer>
     </div>
 
     <script>
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+        document.getElementById('display-date').innerText = new Date().toLocaleDateString('en-GB', { 
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
+        }).toUpperCase();
 
-        async function loadNews() {
-            const feed = document.getElementById('feed');
+        async function fetchNews() {
+            const feed = document.getElementById('news-feed');
             try {
                 const res = await fetch('/api');
-                const data = await res.json();
+                const articles = await res.json();
                 
-                feed.innerHTML = data.map(art => `
+                feed.innerHTML = articles.map(art => `
                     <div class="article">
-                        ${art.urlToImage ? `<img src="${art.urlToImage}" onerror="this.style.display='none'">` : ''}
-                        <div class="article-info">
-                            <span class="category-tag">${art.category || 'General'}</span>
+                        ${art.image ? `<img src="${art.image}" alt="news">` : ''}
+                        <div class="article-content">
                             <h2>${art.title}</h2>
-                            <p>${art.description || 'No description available for this story.'}</p>
-                            <div class="meta-data">
-                                Published: ${art.publishedAt ? new Date(art.publishedAt).toDateString() : 'Today'}
-                            </div>
+                            <p>${art.description}</p>
+                            <div class="article-date">${art.date}</div>
                         </div>
                     </div>
                 `).join('');
-            } catch (e) {
-                feed.innerHTML = "<h2 style='text-align:center'>Unable to refresh feed. Check connection.</h2>";
+            } catch (err) {
+                feed.innerHTML = "<h2>Failed to load news. Please refresh.</h2>";
             }
         }
-        loadNews();
+        fetchNews();
     </script>
 </body>
 </html>
